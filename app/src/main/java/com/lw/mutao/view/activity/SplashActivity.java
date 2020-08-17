@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
@@ -48,7 +49,7 @@ public class SplashActivity extends AppCompatActivity{
 
     private void initData2() {
 
-        CountDownTimerHandler countDownTimerHandler = new CountDownTimerHandler(SplashActivity.this);
+        CountDownTimerHandler countDownTimerHandler = new CountDownTimerHandler(Looper.myLooper(),SplashActivity.this);
 
         Message msg = Message.obtain();
         msg.what = WHAT;
@@ -58,7 +59,7 @@ public class SplashActivity extends AppCompatActivity{
     }
 
     private void intData1() {
-        myHandler = new MyHandler();
+        myHandler = new MyHandler(Looper.myLooper());
         myCountDownTimer = new MyCountDownTimer(5000, 2000);
         myCountDownTimer.start();
         myHandler.postDelayed(new Runnable() {
@@ -83,6 +84,11 @@ public class SplashActivity extends AppCompatActivity{
 
     public static class CountDownTimerHandler extends Handler{
         final WeakReference<SplashActivity> mWeakReference;
+
+        public CountDownTimerHandler(@NonNull Looper looper, SplashActivity activity) {
+            super(looper);
+            this.mWeakReference = new WeakReference<>(activity);
+        }
 
         public CountDownTimerHandler(SplashActivity activity) {
             mWeakReference = new WeakReference<>(activity);
@@ -115,6 +121,10 @@ public class SplashActivity extends AppCompatActivity{
 
 
     public static class MyHandler extends Handler{
+        public MyHandler(@NonNull Looper looper) {
+            super(looper);
+        }
+
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
